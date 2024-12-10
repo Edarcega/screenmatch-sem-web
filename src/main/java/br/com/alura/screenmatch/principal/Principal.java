@@ -1,5 +1,6 @@
 package br.com.alura.screenmatch.principal;
 
+import br.com.alura.screenmatch.model.DadosEpisodio;
 import br.com.alura.screenmatch.model.DadosSerie;
 import br.com.alura.screenmatch.model.DadosTemporada;
 import br.com.alura.screenmatch.services.ConsumoAPI;
@@ -8,8 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 @Component
 public class Principal {
@@ -40,5 +43,16 @@ public class Principal {
         }
         temporadas.forEach(System.out::println);
         temporadas.forEach(t -> t.episodios().forEach(e -> System.out.println(e.titulo())));
+
+        List<DadosEpisodio> dadosEpisodios = temporadas.stream()
+                .flatMap(t -> t.episodios().stream())// Dentro de uma lista, gera outra lista
+                .collect(Collectors.toList());// Gera uma lista que pode ser alterada
+
+        System.out.println("Top 5 episódios");
+        dadosEpisodios.stream()
+                .filter(e -> !e.avaliacao().equalsIgnoreCase("N/A")) // Filtrando por um atributo especifico
+                .sorted(Comparator.comparing(DadosEpisodio::avaliacao).reversed()) // Comparando pelo parametro de avaliação e ordenando do maior para o menor
+                .limit(5) // Limitando a 5 retornos
+                .forEach(System.out::println); // Imprimindo na tela
     }
 }
