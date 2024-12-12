@@ -3,6 +3,7 @@ package br.com.alura.screenmatch.principal;
 import br.com.alura.screenmatch.model.DadosEpisodio;
 import br.com.alura.screenmatch.model.DadosSerie;
 import br.com.alura.screenmatch.model.DadosTemporada;
+import br.com.alura.screenmatch.model.Episodio;
 import br.com.alura.screenmatch.services.ConsumoAPI;
 import br.com.alura.screenmatch.services.ConverterDados;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,5 +55,14 @@ public class Principal {
                 .sorted(Comparator.comparing(DadosEpisodio::avaliacao).reversed()) // Comparando pelo parametro de avaliação e ordenando do maior para o menor
                 .limit(5) // Limitando a 5 retornos
                 .forEach(System.out::println); // Imprimindo na tela
+
+        List<Episodio> episodios = temporadas.stream()
+                .flatMap(t -> t.episodios().stream()
+                        .map(d -> new Episodio(t.numero(), d))
+                ).collect(Collectors.toList());
+
+        episodios.forEach(System.out::println);
     }
+
+
 }
